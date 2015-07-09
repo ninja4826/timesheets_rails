@@ -7,11 +7,15 @@ class SheetsController < ApplicationController
   
   def index
     @sheets = Sheet.all                                 # Get all Sheets
-    
-    render :json => @sheets                             # Return in JSON
+    respond_to do |format|
+      format.html
+      format.json { render :json => @sheets }
+    end
+    # render :json => @sheets                             # Return in JSON
   end
   
   def find
+    objs = {}
     if !params[:month].nil? && !params[:year].nil?
       logger.debug(params[:month])
       logger.debug(params[:year])
@@ -19,14 +23,18 @@ class SheetsController < ApplicationController
       logger.debug(JSON.dump(month))
       sheets = month.sheets
       
-      objs = {}
       sheets.each do |sheet|
         objs[Time.at(sheet.day).day] = sheet.as_json
       end
       logger.debug(JSON.dump(objs))
       render :json => objs
     else
-      render :json => {error: true}
+      objs = {error: true}
+    end
+    @objs = objs
+    respond_to do |format|
+      format.html { redirect_to @objs }
+      format.json { render :json => objs }
     end
   end
   

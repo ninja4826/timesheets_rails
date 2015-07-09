@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   root 'sheets#index'
   # get '/sheets/add' => 'sheets#add'
+  get '/index' => 'sheets#index'
+  
+  get '/new' => 'sheets#new'
+  
   post '/add' => 'sheets#add'
   
   get '/find/:month/:year' => 'sheets#find'

@@ -33,6 +33,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # gem 'capistrano-rails', group: :development
 
 gem 'whenever', :require => false
+gem 'bootstrap-sass', '~> 3.3.5'
+# gem 'sass-rails', '>= 3.2'
+gem 'sprockets-rails', '>= 2.1.4'
+
+gem 'bootstrap-material-design'
 
 group :development, :test do
   # Call 'debugger' anywhere in the code to stop execution and get a debugger console

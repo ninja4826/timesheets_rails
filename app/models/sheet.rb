@@ -48,6 +48,74 @@ class Sheet < ActiveRecord::Base
     return !errors
   end
   
+  def get_time(key)
+    if check(key)
+      return Time.at(self[key]).strftime("%l:%M:%S %p")
+    else
+      return 'None'
+    end
+  end
+  
+  def get_date
+    if check(:day)
+      return Time.at(self.day).strftime("%-m/%-d/%y")
+    else
+      return 'None'
+    end
+  end
+  
+  def get_duration
+    t = get_dur()
+    unless t.nil?
+      return "#{t[:hours].to_s}:#{t[:minutes].to_s.rjust(2, '0')}:#{t[:seconds].to_s.rjust(2, '0')}"
+    else
+      return 'N/A'
+    end
+  end
+  
+  def get_pay
+    hour_rate = 11.5
+    net_rate = 0.891236585901792
+    t_obj = get_dur()
+    unless t_obj.nil?
+      t = (t_obj[:seconds] + (t_obj[:minutes] * 60) + (t_obj[:hours] * 3600))
+      return "$" + ((t * ((hour_rate * net_rate) / 3600)).round(2).to_s)
+    else
+      return 'N/A'
+    end
+  end
+  
+  def get_dur
+    lunch_dur = 0
+    unless (self.lunch_start.nil? || self.lunch_end.nil?)
+      lunch_dur = self.lunch_end - self.lunch_start
+    end
+    logger.debug(self)
+    unless (self.in_time.nil? || self.out_time.nil?)
+      logger.debug("yay")
+      seconds_diff = ((self.out_time - self.in_time) - lunch_dur).to_i.abs
+      
+      hours = seconds_diff / 3600
+      seconds_diff -= hours * 3600
+      
+      minutes = seconds_diff / 60
+      seconds_diff -= minutes * 60
+      
+      seconds = seconds_diff
+      return {
+        :hours => hours,
+        :minutes => minutes,
+        :seconds => seconds
+      }
+    else
+      return nil
+    end
+  end
+  
+  def check(key)
+    return !self[key].nil?
+  end
+  
   def quarter_round(time)
     array = Time.at(time).to_a
     quarter = ((array[1] % 60) / 15.0).round

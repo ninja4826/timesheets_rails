@@ -7,8 +7,28 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<%= yield %>
-
+  <div class="navbar navbar-inverse">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Timesheets</a>
+    </div>
+    <div class="navbar-collapse collapse navbar-inverse-collapse">
+      <ul class="nav navbar-nav">
+        <% ['index', 'new'].each do |act| %>
+          <li<%= ((params[:action] == act) ? ' class=active' : '') %>>
+            <a href="/<%=act%>"><%= act.gsub(/\w+/) {|word| word.capitalize! } %></a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="container" style="padding-top:65px;">
+    <%= yield %>
+  </div>
 </body>
 </html>
