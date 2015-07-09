@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  day: 1
+  in_time: 1
+  out_time: 1
+  lunch_start: 1
+  lunch_end: 1
+  month_id: 
+
+two:
+  day: 1
+  in_time: 1
+  out_time: 1
+  lunch_start: 1
+  lunch_end: 1
+  month_id: 
