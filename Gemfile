@@ -39,6 +39,8 @@ gem 'sprockets-rails', '>= 2.1.4'
 
 gem 'bootstrap-material-design'
 
+gem 'highline'
+
 group :development, :test do
   # Call 'debugger' anywhere in the code to stop execution and get a debugger console
   gem 'debugger'

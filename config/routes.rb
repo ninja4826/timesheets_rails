@@ -1,9 +1,7 @@
 Rails.application.routes.draw do
   root 'sheets#index'
   # get '/sheets/add' => 'sheets#add'
-  get '/index' => 'sheets#index'
-  
-  get '/new' => 'sheets#new'
+  get '/index', to: redirect('/')
   
   post '/add' => 'sheets#add'
   

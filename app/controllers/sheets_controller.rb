@@ -6,7 +6,19 @@ class SheetsController < ApplicationController
   protect_from_forgery :except => :add
   
   def index
-    @sheets = Sheet.all                                 # Get all Sheets
+    @sheets = Sheet.all                                # Get all Sheets
+    @objs = {}
+    @sheets.each do |sheet|
+      @objs[sheet.get_date] = {
+        in_time: sheet.get_time(:in_time),
+        out_time: sheet.get_time(:out_time),
+        lunch_start: sheet.get_time(:lunch_start),
+        lunch_end: sheet.get_time(:lunch_end),
+        duration: sheet.get_duration,
+        pay: sheet.get_pay
+      }
+    end
+    @objs = JSON.dump(@objs)
     respond_to do |format|
       format.html
       format.json { render :json => @sheets }
@@ -27,15 +39,12 @@ class SheetsController < ApplicationController
         objs[Time.at(sheet.day).day] = sheet.as_json
       end
       logger.debug(JSON.dump(objs))
-      render :json => objs
+      # render :json => objs
     else
       objs = {error: true}
     end
     @objs = objs
-    respond_to do |format|
-      format.html { redirect_to @objs }
-      format.json { render :json => objs }
-    end
+    render :json => @objs
   end
   
   def add

@@ -1048,33 +1048,11 @@
     "id": 96,
     "day": 1436245200,
     "in_time": 1436279400,
-    "out_time": 1436290200,
+    "out_time": null,
     "lunch_start": null,
     "lunch_end": null,
     "month_id": 1,
     "created_at": "2015-07-09 02:43:17 UTC",
-    "updated_at": "2015-07-10 17:40:08 UTC"
-  },
-  {
-    "id": 97,
-    "day": 1436504400,
-    "in_time": 1436534100,
-    "out_time": 1436558400,
-    "lunch_start": null,
-    "lunch_end": null,
-    "month_id": 1,
-    "created_at": "2015-07-10 17:40:08 UTC",
-    "updated_at": "2015-07-10 19:51:44 UTC"
-  },
-  {
-    "id": 98,
-    "day": 1436331600,
-    "in_time": 1436366700,
-    "out_time": 1436386500,
-    "lunch_start": 1436371200,
-    "lunch_end": 1436373000,
-    "month_id": 1,
-    "created_at": "2015-07-10 17:40:08 UTC",
-    "updated_at": "2015-07-10 17:40:08 UTC"
+    "updated_at": "2015-07-09 02:43:17 UTC"
   }
 ]

@@ -1,26 +1,179 @@
-<table class="table table-striped table-hover">
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Time In</th>
-      <th>Time Out</th>
-      <th>Lunch Start</th>
-      <th>Lunch End</th>
-      <th>Duration</th>
-      <th>Net Pay</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @sheets.each do |sheet| %>
+<div class="row">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-left">
+    <h1 id="month-name"></h1>
+  </div>
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pull-right">
+    <div class="btn-group pull-right">
+      <a href="javascript:void(0)" class="btn btn-primary">Month</a>
+      <a href="bootstrap-elements.html" data-target="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu" id="month-dropdown"></ul>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <table class="table table-striped table-hover" id="time-table">
+    <thead>
       <tr>
-        <td><%= sheet.get_date %></td>
-        <td><%= sheet.get_time(:in_time) %></td>
-        <td><%= sheet.get_time(:out_time) %></td>
-        <td><%= sheet.get_time(:lunch_start) %></td>
-        <td><%= sheet.get_time(:lunch_end) %></td>
-        <td><%= sheet.get_duration %></td>
-        <td><%= sheet.get_pay %></td>
+        <th>Date</th>
+        <th>Time In</th>
+        <th>Time Out</th>
+        <th>Lunch Start</th>
+        <th>Lunch End</th>
+        <th>Duration</th>
+        <th>Net Pay</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+<script>
+  var timesheet;
+  $(function() {
+    timesheet = new Timesheet('<%= raw @sheets.to_json %>');
+  });
+  
+  var Timesheet = function(json) {
+    this.data = JSON.parse(json);
+    var d = new Date();
+    this.show_month((d.getMonth() + 1) + '/' + d.getFullYear());
+    this.fill_month_selector();
+  }
+  
+  Timesheet.prototype = {
+    show_month: function(month_year) {
+      if (this.months === undefined) {
+        this.organize();
+      }
+      var month = this.months[month_year];
+      var table = $('#time-table').find('tbody');
+      $('#month-name').text((new Date(month_year.split('/').join('/1/'))).toLocaleString('en-us', {month: 'long'}));
+      rows = [];
+      row_i_arr = [];
+      for (var i in month) {
+        row_i_arr.push(parseInt(i));
+      }
+      
+      row_i_arr.sort(function(a, b) { return a - b; });
+      
+      for (var i in row_i_arr) {
+        i = row_i_arr[i];
+        row = month[i];
+        row_str = '<tr><td>';
+        row_arr = [];
+        row_arr.push(month_year.split('/').join('/'+i+'/'));
+        row_arr.push(get_time(row, 'in_time'));
+        row_arr.push(get_time(row, 'out_time'));
+        row_arr.push(get_time(row, 'lunch_start'));
+        row_arr.push(get_time(row, 'lunch_end'));
+        row_arr.push(get_duration(row));
+        row_arr.push(get_pay(row));
+        
+        row_str += (row_arr.join('</td><td>') + '</td></tr>');
+        rows.push(row_str);
+      }
+      table.empty();
+      for (var i in rows) {
+        table.append(rows[i]);
+      }
+    },
+    
+    organize: function() {
+      months = {};
+      for (var d_i in this.data) {
+        var d = this.data[d_i];
+        d_day = new Date(d.day * 1000);
+        month_key = (d_day.getMonth() + 1) + '/' + d_day.getFullYear();
+        if (!(month_key in months)) {
+          months[month_key] = {};
+        }
+        months[month_key][d_day.getDate()] = d;
+      }
+      this.months = months;
+    },
+    
+    fill_month_selector: function() {
+      if (this.months === undefined) {
+        this.organize();
+      }
+      var list = [];
+      for (var m_y in this.months) { list.push((new Date(m_y.split('/').join('/1/'))).toLocaleString('en-us', {month: 'long', year: 'numeric'})); }
+      list.sort(function(a, b) {
+        a_d = new Date(a).getTime();
+        b_d = new Date(b).getTime();
+        return b_d - a_d;
+      });
+      console.log(list);
+      var that = this;
+      $(document).on('click', '.month-btn', function(event) {
+        var d = new Date(this.text);
+        that.show_month((d.getMonth() + 1) + '/' + d.getFullYear());
+      });
+      $('#month-dropdown').append('<li><a class="month-btn">' + list.join('</a></li><li><a class="month-btn">') + '</a></li>');
+    }
+  }
+  
+  function get_time(obj, key) {
+    if (!(obj[key] === null)) {
+      return (new Date(obj[key] * 1000)).toLocaleTimeString();
+    } else {
+      return 'N/A';
+    }
+  }
+  
+  function get_duration(obj) {
+    var t = get_dur(obj);
+    if (t == 'N/A') {
+      return t;
+    }
+    if (t.m < 10) {
+      t.m = '0' + t.m;
+    }
+    if (t.s < 10) {
+      t.s = '0' + t.s;
+    }
+    return t.h + ':' + t.m + ':' + t.s;
+  }
+  
+  function get_pay(obj) {
+    var t_obj = get_dur(obj);
+    if (t_obj == 'N/A') {
+      return t_obj;
+    }
+    var hour_rate = 11.5;
+    var net_rate = 0.891236585901792;
+    
+    t = (t_obj.s + (t_obj.m * 60) + (t_obj.h * 3600));
+    return '$' + ((t * ((hour_rate * net_rate) / 3600)).toFixed(2));
+  }
+  
+  function get_dur(obj) {
+    if (obj['in_time'] === null || obj['out_time'] === null) {
+      return 'N/A';
+    }
+    var lunch_dur = 0;
+    if (!(obj['lunch_start'] === null && obj['lunch_end'] === null)) {
+      lunch_dur = (obj.lunch_end - obj.lunch_start)
+    }
+    var seconds_diff, hours, minutes, seconds;
+    
+    seconds_diff = (obj.out_time - obj.in_time) - lunch_dur;
+    
+    // hours = seconds_diff / 3600;
+    hours = Math.floor(seconds_diff / 3600);
+    seconds_diff -= hours * 3600;
+    
+    minutes = seconds_diff / 60;
+    seconds_diff -= minutes * 60;
+    
+    seconds = seconds_diff;
+    
+    return {
+      h: hours,
+      m: minutes,
+      s: seconds
+    };
+  }
+</script>

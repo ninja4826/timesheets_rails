@@ -90,9 +90,7 @@ class Sheet < ActiveRecord::Base
     unless (self.lunch_start.nil? || self.lunch_end.nil?)
       lunch_dur = self.lunch_end - self.lunch_start
     end
-    logger.debug(self)
     unless (self.in_time.nil? || self.out_time.nil?)
-      logger.debug("yay")
       seconds_diff = ((self.out_time - self.in_time) - lunch_dur).to_i.abs
       
       hours = seconds_diff / 3600
