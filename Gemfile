@@ -41,6 +41,8 @@ gem 'bootstrap-material-design'
 
 gem 'highline'
 
+gem 'axlsx_rails'
+
 group :development, :test do
   # Call 'debugger' anywhere in the code to stop execution and get a debugger console
   gem 'debugger'

@@ -5,6 +5,51 @@ class SheetsController < ApplicationController
   
   protect_from_forgery :except => :add
   
+  def build_sheet
+    d = Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
+    start_time = d.beginning_of_week(:sunday).to_time.to_i
+    end_time = d.end_of_week(:saturday).to_time.to_i
+    
+    if start_time.nil? || end_time.nil?
+      return
+    end
+    
+    sheets = Sheet.where(day: start_time..end_time)
+    
+    week = [
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+      nil
+    ]
+    
+    sheets.each do |sheet|
+      duration = sheet.get_duration.split(":").map {|x| x.to_i}
+      duration[1] = duration[1] / 60.0
+      week[Time.at(sheet["day"]).strftime("%u").to_i - 1] = duration[0] + duration[1]
+    end
+    
+    @week = week
+    
+    # render :xlsx => 'build_sheet', :template => 'sheets/build_sheet'
+    # respond_to do |format|
+    #   format.xlsx {
+    #     render xlsx: 'build_sheet', disposition: 'inline'
+    #   }
+    # end
+    render json: {asdf: ActionView::Template::Handlers.extensions}
+  end
+  
+  def photon_test
+    respond_to do |format|
+      format.html
+      format.json { render :json => {} }
+    end
+  end
+  
   def index
     @sheets = Sheet.all                                # Get all Sheets
     @objs = {}

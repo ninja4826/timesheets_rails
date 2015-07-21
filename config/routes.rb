@@ -6,6 +6,10 @@ Rails.application.routes.draw do
   post '/add' => 'sheets#add'
   
   get '/find/:month/:year' => 'sheets#find'
+  
+  get '/build_sheet/:month/:day/:year' => 'sheets#build_sheet' 
+  
+  # get '/photon_test' => 'sheets#photon_test'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

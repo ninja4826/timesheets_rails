@@ -1,0 +1,98 @@
+workbook = xlsx_package.workbook
+styles = nil
+template = nil
+
+workbook.styles do |s|
+      
+  template = [
+    ['EMPLOYEE: ', 'Rusell Hueske', nil,  nil, nil, 'EMPLOYEE # 950', nil, nil, 'MEASUREMENT & CONTROL GROUP', nil, 'WEEKENDING:', Time.at(end_time).strftime("%-m/%-d/%y")],
+    [nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, "_______________"],
+    ["PROJECT #", "CLIENT /", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil],
+    ["/ WO", "CUSTOMER", "MON", "TUE", "WED", "THUR", "FRI", "SAT", "SUN", "TASK DESCRIPTION", "INVENTORY USED", nil]
+  ]
+  styles =
+  [
+    [
+      s.add_style(alignment: {vertical: :top}, b: true, sz: 10, font_name: 'Calibri'),  # EMPLOYEE:
+      s.add_style(alignment: {vertical: :top}, b: true, sz: 10, font_name: 'Calibri'),  # Russell Hueske
+      nil,  # nil
+      nil,  # nil
+      nil,  # nil
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Calibri'),  # EMPLOYEE # 950
+      nil,  # nil
+      nil,  # nil
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Calibri'),  # MEASUREMENT & CONTROL GROUP
+      nil,  # nil
+      s.add_style(alignment: {vertical: :bottom}, b: false, sz: 11, font_name: 'Calibri', fg_color: 'FF0000'),  # WEEKENDING
+      s.add_style(alignment: {vertical: :bottom}, b: true, sz: 10, font_name: 'Calibri'), # Time
+    ],
+    
+    s.add_style(alignment: {vertical: :bottom}, b: false, sz: 11, font_name: 'Calibri', fg_color: 'FF0000'),
+    
+    s.add_style(alignment: {vertical: :top, horizontal: :left}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:top, :left, :right]}),
+    
+    [
+      s.add_style(alignment: {vertical: :top, horizontal: :left}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :left}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+      s.add_style(alignment: {vertical: :top, horizontal: :center}, b: true, sz: 10, font_name: 'Times New Roman', border: {style: :medium, color: '000000', edges: [:left, :bottom, :right]}),
+    ],
+    {
+      top: s.add_style(alignment: {vertical: :center, horizontal: :center}, b: true, sz: 11, font_name: 'Calibri', border: {style: :medium, color: '000000', edges: [:top, :right, :left]}, border_bottom: {style: :dashed}),
+      bottom: s.add_style(alignment: {vertical: :center, horizontal: :center}, b: true, sz: 11, font_name: 'Calibri', border: {style: :medium, color: '000000', edges: [:right, :bottom, :left]})
+    }
+  ]
+end
+
+workbook.add_worksheet(name: "Timesheet") do |sheet|
+  template.each_with_index do |item, index|
+    sheet.add_row(item, style: styles[index])
+  end
+  sheet.merge_cells("F1:H1")
+  sheet.merge_cells("I1:J1")
+  sheet.merge_cells("K1:K2")
+  sheet.merge_cells("K3:L3")
+  sheet.merge_cells("K4:L4")
+  
+  sheet.add_row((['9110343', nil] + @week + ['Parts', nil]), style: styles[4][:top])
+  sheet.merge_cells("K5:L5")
+  sheet.add_row([nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil], style: styles[4][:top])
+  sheet.merge_cells("K6:L6")
+  
+  (3..20).each do |i|
+    style_ = styles[4][:top]
+    if (i / 2) == 0
+      style_ = styles[4][:bottom]
+    end
+    sheet.add_row([nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil], style: style_)
+    str = "K" + (i + 4).to_i + ":L" + (i + 4).to_i
+    sheet.merge_cells(str)
+    
+  end
+  
+  sheet.rows[0].height = 24.75
+  sheet.rows[1].height = 4.5
+  sheet.rows[2].height = 22.5
+  sheet.rows[3].height = 27.75
+  
+  sheet.column_info[0].width = 10.43
+  sheet.column_info[1].width = 13.71
+  sheet.column_info[2].width = 5
+  sheet.column_info[3].width = 5
+  sheet.column_info[4].width = 5
+  sheet.column_info[5].width = 5.71
+  sheet.column_info[6].width = 5
+  sheet.column_info[7].width = 5
+  sheet.column_info[8].width = 5
+  sheet.column_info[9].width = 24
+  sheet.column_info[10].width = 12.29
+  sheet.column_info[11].width = 15.29
+end

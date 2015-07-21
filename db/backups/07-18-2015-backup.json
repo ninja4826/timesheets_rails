@@ -1109,16 +1109,5 @@
     "month_id": 1,
     "created_at": "2015-07-16 16:46:21 UTC",
     "updated_at": "2015-07-16 16:54:20 UTC"
-  },
-  {
-    "id": 102,
-    "day": 1437109200,
-    "in_time": 1437141600,
-    "out_time": 1437165900,
-    "lunch_start": null,
-    "lunch_end": null,
-    "month_id": 1,
-    "created_at": "2015-07-17 20:38:16 UTC",
-    "updated_at": "2015-07-17 20:38:35 UTC"
   }
 ]
